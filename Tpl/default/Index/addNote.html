@@ -1,0 +1,76 @@
+
+<include file="__THEME__/header" />
+<include file="__THEME__/editor" />
+<script type="text/javascript" src="../Public/Js/Common.js"></script>
+<script type="text/javascript" src="../Public/Js/addTask.js"></script>
+
+<script type="text/javascript" src="../Public/Js/datePicker/date.js"></script>
+<script type="text/javascript" src="../Public/Js/datePicker/jquery.datePicker.js"></script>
+<link type="text/css" rel="stylesheet" href="../Public/Js/datePicker/datePicker.css"/>
+<script type="text/javascript">
+	$(function(){
+		Date.format = "yyyy-mm-dd";
+		Date.dayNames = ['日', '一', '二', '三', '四', '五', '六'];
+		Date.monthNames = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+
+		$('.date-pick').datePicker({autoFocusNextInput: true}).val(new Date().asString()).trigger('change');
+	});
+</script>
+
+<div class="content_holder">
+<div class="content no_bg">
+  <include file="../Public/_task_header" />
+  <div class="main no_l">
+    <div class="mainbox">
+        <include file="../Public/_right" />
+        <div class="mainbox_appC">
+        <div class=page_title>   
+            <h2>
+                <span class="f12px fn right"><a href="javascript:history.back( -1 )">&lt;&lt;返回上一页</a></span>
+                发布便签
+            </h2>
+        </div>
+        <div class="TaskBox">
+          <form name="addTask" action="__URL__&act=doAddNote" method="post" onsubmit="return check();">
+            <div class="LogList">
+              <ul class="edit">
+                <li style="padding:0;">
+                  <label>标题: &nbsp;</label>
+                  <div class="c1">
+                    <input id="title" name="title" type="text" class="text" style="width:363px" onBlur="this.className='text'" onFocus="this.className='text2'" maxlength="25" />
+                  </div>
+                </li>
+                <li style="padding:0;">
+
+                </li>
+                <li style="padding:0;">
+					<fieldset class="collapsible">
+						<legend class="" onclick="toggleFieldset(this);"><span class="">便签内容</span></legend>
+						<div class="c1">
+							<textarea id="content" name="content" style="height:350px;width:95%;">{$content}</textarea>
+						</div>
+					</fieldset>
+                </li>
+                <li style="padding:0;">
+                  <label>&nbsp;</label>
+                  <div class="c1" style="height:30px;"><input type="submit" class="btn_b" value="发表" /></div>
+                </li>
+              </ul>
+            </div>
+          </form>
+        </div>
+        <div class="c"></div>
+      </div>
+    </div>
+    <div class="c"></div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	loadKEditor("content");
+	loadKEditor("rel_digest");
+});
+</script> 
+<include file="__THEME__/footer" />
+

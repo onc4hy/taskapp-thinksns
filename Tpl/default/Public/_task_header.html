@@ -1,0 +1,17 @@
+
+<link rel="stylesheet" href="../Public/task.css" type="text/css" media="screen" charset="utf-8" />
+<link href="__PUBLIC__/js/pagination/pagination.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="../Public/Js/kindeditor/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/Js/jquery.scrollTo-min.js"></script>
+
+<div class=page_tit>
+    <h2><img src="{$ts['app']['icon_url']}" />{$ts['app']['app_alias']}</h2>
+    <ul class="tit_tab">
+        <php>$_header_tab_on_my = in_array(ACTION_NAME, array('my','admin','addTask')) || (ACTION_NAME == 'show' && $isOwner == '1') ? '1' : '0';</php>
+        <li><a href="{:U('task/Index/index')}" <eq name="_header_tab_on_my" value="0">class="on"</eq>>任务首页</a></li>
+        <li><a href="{:U('task/Index/my')}" <eq name="_header_tab_on_my" value="1">class="on"</eq>>我的任务</a></li>
+    </ul>
+    <div class="c"></div>
+</div>
+

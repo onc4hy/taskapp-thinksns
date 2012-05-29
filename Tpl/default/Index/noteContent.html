@@ -1,0 +1,133 @@
+	
+<include file="__THEME__/header" />
+<script type="text/javascript" src="../Public/Js/Common.js" ></script>
+<script>
+$(document).ready(function(){
+	photo_resize('.img_resize');
+});
+</script>
+
+{:W('Weibo',array('tpl_name'=>$mid==$uid?'task_note_create_weibo':'task_note_share_weibo','button_title'=>'分享'))}
+<php>
+$tpl_data = array('author'=>getUserName($uid),'title'=>text($title),'body'=>getShort(text($content),80),'url'=>U('task/Index/showNote',array('id'=>$id,'mid'=>$uid)));
+$tpl_data = urlencode(serialize($tpl_data));
+$param_data = urlencode(serialize(array('has_status'=>1,'is_success_status'=>1,'status_title'=>'发布成功')));
+</php>
+<div class="content_holder">
+<div class="content no_bg"><!-- 内容 begin  -->
+  <include file="../Public/_task_header" />
+  <div class="main no_l"><!-- 画布 begin  -->
+    <div class="mainbox">
+
+    <include file="../Public/_right" />
+
+    <div class="mainbox_appC">
+    <div class="person_info">
+      <div class="userPic" ><space uid="uid" >{uavatar}</space></div>
+      <div style="padding-left:70px;">
+        <h2>
+            <span class="right fn f12px"><a id="test" href="javascript:history.back( -1 )">返回上一页</a></span>
+            <space uid="uid" class="null"></space>{$uname}的任务便签
+        </h2>
+		<p>
+			<em>发布时间：{$cTime|friendlyDate}</em>
+		<eq name="isOwner" value="1">
+        </p>
+        <p>
+			<a href="{:U('task/Index/myNotes')}" >我的全部任务便签</a>
+		<else/>
+        </p>
+        <p>
+			<a href="{:U('task/Index/personalNotes', array('uid'=>$uid))}" >{$uid|getUserName}的全部任务便签</a>
+		</eq>
+		</p>
+      </div>
+    </div>
+    
+    <div class="TaskBox">
+      <div class="">
+        <div class="btmline lh30 mLR15">
+            <div class="right">
+                <a href="{:U('task/Index/showNote', array('id'=>$id, 'action'=>'lt', 'mid'=>$uid))}">上一篇</a> / <a href="{:U('task/Index/showNote', array('id'=>$id, 'action'=>'gt', 'mid'=>$uid))}">下一篇</a>
+            </div>
+            第 {$num}/{$count} 篇任务便签
+        </div>
+        <div style="margin-bottom:20px; " class="mLR15">
+          <div class="tit_log">
+            <h1>
+                <span class="right">
+                <input type="button" name="Submit" value="分享" class="BtnShare" onclick="_widget_weibo_start('', '{$tpl_data}');" id="BtnShare_{$id}"/>
+                </span><strong># {$id}&nbsp;{$title}</strong>
+            </h1>
+            <p>
+                <eq name="isOwner" value="1">
+                <a href="{:U('task/Index/editNote', array('id'=>$id, 'mid'=>$uid))}">编辑</a>&nbsp;&nbsp;
+                <span class="cGray2">|</span>&nbsp;&nbsp;
+                <a href="javascript:deleteTask('{:U('task/Index/doDeleteNote', array('id'=>$id))}')">删除</a>&nbsp;&nbsp;
+                </eq>
+            </p>
+          </div>
+          <php>if( $isOwner == 0 && $private == 2 ){</php>
+          <div class="bg_msg">
+            <div class="bg_msg_btm">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="40" align="center"><img src="../Public/images/ico_suo.png" width="20" height="20" /></td>
+                  <td>只有主人可以查看此任务</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <php>}else if($isOwner == 0 && $private == 3){</php>
+          <div class="bg_msg">
+            <div class="bg_msg_btm">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="40" align="center"><img src="../Public/images/ico_yaoshi.png" width="20" height="20" /></td>
+                  <td colspan="3">本任务需要密码才能访问</td>
+                </tr>
+                <form method="post" action="">
+                  <tr>
+                    <td height="50" align="center">&nbsp;</td>
+                    <td width="37">密码:</td>
+                    <td width="140"><input name="password" type="password" class="text" id="title" onfocus="this.className='text2'" onblur="this.className='text'" size="20" maxlength="30"/></td>
+                    <td width="71"><input type="submit" value="确定" class="btn_b"/></td>
+                  </tr>
+                </form>
+              </table>
+            </div>
+          </div>
+          <php>}elseif( $isOwner == 0 && $private == 1 && false == $isFriend){</php>
+          <div class="bg_msg">
+            <div class="bg_msg_btm">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="40" align="center"><img src="../Public/images/ico_suo.png" width="20" height="20" /></td>
+                  <td>只有主人的好友可以查看此任务</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <php>}else{</php>
+			<fieldset class="collapsible">
+				<legend class="" onclick="toggleFieldset(this);">任务说明</legend>
+				<div class="f14px roundbgF6">
+					{$content}
+				</div>
+			</fieldset>
+            <neq name="mTime" value="0"><div class="cGray2 lh30">最后修改时间: {$mTime|friendlyDate}</div></neq>
+          <php>} </php>
+          
+        </div>
+        <div>{/*:W('Comment',array('type'=>'task','appid'=>$id, 'author_uid'=>$uid, 'title'=>$title, 'url'=>U('task/Index/show',array('id'=>$id,'mid'=>$uid)), 'table'=>'task','id_field'=>'id','comment_count_field'=>'commentCount'))*/}</div>
+      </div>
+    </div>
+    <div class="c"></div>
+    </div>
+    </div>
+  </div>
+  <div class="c"></div>
+</div>
+</div>
+<include file="../Public/_footer" />
+

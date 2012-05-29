@@ -1,0 +1,136 @@
+
+<include file="__THEME__/header" />
+<include file="__THEME__/editor_new" />
+<script type="text/javascript" src="../Public/Js/addTask.js"></script>
+<div class="content_holder">
+<div class="content">
+  <div class="main no_l">
+    <div class="mainbox">
+        <include file="../Public/_right" />
+      
+        <div class="mainbox_C">
+        <div class=page_title> 
+            <h2>
+                <span class="f12px fn right"><a href="javascript:history.back( -1 )">&lt;&lt;返回上一页</a></span>
+                发表任务
+            </h2>
+        </div>
+        <div class="TaskBox">
+          <form name="addTask" action="__URL__&act=doAddTask" method="post" onsubmit="return check();">
+            <div class="LogList">
+              <ul class="edit">
+                <li style="padding:0;">
+                  <div class="c1" style="line-height:30px;">标题: &nbsp;</div>
+                  <div class="c2">
+                    <select name="category" id="select" onchange="javascript:changeCategory($(this))" class="text mr5">
+                      <php>foreach( $category as $value ){</php>
+                      <option value="{$value['id']}">{$value['name']}</option>
+                      <php>}</php>
+                      
+                      <optgroup id="group">
+                      <option value="0">+添加分类</option>
+                      </optgroup>
+                    </select>
+                    <input id="title" name="title" type="text" class="text" style="width:60%;" onBlur="this.className='text'" onFocus="this.className='text2'" maxlength="25" />
+                  </div>
+                </li>
+                <li style="padding:0;">
+				  <fieldset id="" class="">
+					<legend onclick="toggleFieldset(this)">相关属性</legend>
+					<div class="" style="">
+						<div class="">
+							<div class="row">
+								<label>分享类型</label>
+								<input type="text" class="" name="share_type" value="">
+							</div>
+							<div class="row">
+								<label>分享人</label>
+								<input type="text" class="" name="share_source" value="">
+							</div>
+							<div class="row">
+								<label>被分享人</label>
+								<input type="text" class="" name="share_target" value="">
+							</div>
+							<div class="row">
+								<label>父任务</label>
+								<input type="text" class="" name="parent_id" value="">
+							</div>
+							<div class="row">
+								<label>层级</label>
+								<input type="text" class="" name="level" value="">
+							</div>
+							<div class="row">
+								<label>任务类型</label>
+								<input type="text" class="" name="task_type" value="">
+							</div>
+							<div class="row">
+								<label>任务状态</label>
+								<input type="text" class="" name="task_status" value="">
+							</div>
+							<div class="row">
+								<label>任务优先级</label>
+								<input type="text" class="" name="task_priority" value="">
+							</div>
+							<div class="row">
+								<label>开始日期</label>
+								<input type="text" class="" name="start_date" value="">
+							</div>
+							<div class="row">
+								<label>计划完成日期</label>
+								<input type="text" class="" name="due_date" value="">
+							</div>
+							<div class="row">
+								<label>预期时间</label>
+								<input type="text" class="" name="estimated_time" value="">
+							</div>
+							<div class="row">
+								<label>耗时</label>
+								<input type="text" class="" name="spent_time" value="">
+							</div>
+							<div class="row">
+								<label>%完成度</label>
+								<input type="text" class="" name="done_ratio" value="">
+							</div>
+							<div class="row">
+								<label>明细摘要</label>
+								<input type="text" class="" name="detail_summary" value="">
+							</div>
+							<div class="row">
+								<label>相关网摘</label>
+								<input type="text" class="" name="rel_digest" value="">
+							</div>
+							<div class="row">
+								<label>相关任务</label>
+								<input type="text" class="" name="rel_tasks" value="">
+							</div>
+						</div>
+					</div>
+				  </fieldset>
+                </li>
+                <li style="padding:0;">
+                  <div class="c1">内容: &nbsp;</div>
+                  <div class="c2"><textarea id="content" name="content" style="height:350px"></textarea></div>
+                </li>
+                <li style="padding:0;">
+                  <div class="c1">&nbsp;</div>
+                  <div class="c2" style="height:30px;"><input type="submit" class="btn_b" value="发表" /></div>
+                </li>
+              </ul>
+            </div>
+          </form>
+        </div>
+        <div class="c"></div>
+      </div>
+    </div>
+    <div class="c"></div>
+  </div>
+</div>
+</div>
+<script>
+$(document).ready(function(){
+	//E	=	KISSY.Editor( "content" );
+	loadEditor("content");
+});
+</script> 
+<include file="../Public/_footer" />
+

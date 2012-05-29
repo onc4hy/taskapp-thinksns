@@ -1,0 +1,143 @@
+
+<div class="">
+<ul class="nav-tabs">
+<php>
+	if( in_array(ACTION_NAME, array('my','admin','addTask','personal')) ) {
+</php>
+  <li class="active dropdown">
+    <a href="{:U('task/Index/my')}" class="on pull-left">
+        <php>$name = empty($name) ? '我' : $name;</php>
+        <span>{$name}的任务</span>
+    </a>
+	<div class="mode-togglearea" style="">
+		<label for="" title="全览模式">
+			<i class="mode-icon icon-th-large"></i>
+			<input type="radio" name="mode-radio" checked=true onclick="toggleMode('overviewList','minimalList');">
+		</label>
+		<label for="" title="极简模式">
+			<i class="mode-icon icon-th-list"></i>
+			<input type="radio" name="mode-radio" onclick="toggleMode('minimalList','overviewList');">
+		</label>
+	</div>
+  </li>
+<php>}else {</php>
+  <php>if(ACTION_NAME=='search'){</php>
+   <li class="active dropdown">
+    <a href="{:U('task/Index/search')}" class="on pull-left">
+        <span>搜索任务</span>
+    </a>
+  </li>
+  <php>}</php>
+  <php>if( (ACTION_NAME=='notices') || (ACTION_NAME=='myNotices') || (ACTION_NAME=='personalNotices') ){</php>
+   <li class="active dropdown">
+		<php>if( ACTION_NAME=='myNotices') {</php>
+    <a href="{:U('task/Index/myNotices')}" class="on pull-left">
+        <span>我的任务通告</span>
+    </a>
+		<php>}else if ( ACTION_NAME=='personalNotices') {</php>
+    <a href="{:U('task/Index/personalNotices')}" class="on pull-left">
+        <span>{$uname}的任务通告</span>
+    </a>
+		<php>}else{</php>
+    <a href="{:U('task/Index/notices')}" class="on pull-left">
+        <span>任务通告</span>
+    </a>
+		<php>}</php>
+	<php>if($ts['user']['admin_level'] == 1){</php>
+	<div class="mode-togglearea" style="">
+		<a href="{:U('task/Index/addNotice')}" title="添加"><i class="icon-plus"></i>添加</a>
+	</div>
+	<php>}</php>
+  </li>
+  <php>}</php>
+  <php>if( (ACTION_NAME=='notes') || (ACTION_NAME=='myNotes') || (ACTION_NAME=='personalNotes') ){</php>
+   <li class="active dropdown">
+		<php>if( ACTION_NAME=='myNotices') {</php>
+    <a href="{:U('task/Index/myNotes')}" class="on pull-left">
+        <span>我的任务便签</span>
+    </a>
+		<php>}else if ( ACTION_NAME=='personalNotes') {</php>
+    <a href="{:U('task/Index/personalNotices')}" class="on pull-left">
+        <span>{$uname}的任务便签</span>
+    </a>
+		<php>}else{</php>
+    <a href="{:U('task/Index/notes')}" class="on pull-left">
+        <span>任务便签</span>
+    </a>
+		<php>}</php>
+	<php>if($uid > 0){</php>
+	<div class="mode-togglearea" style="">
+		<a href="{:U('task/Index/addNote')}" title="添加"><i class="icon-plus"></i>添加</a>
+	</div>
+	<php>}</php>
+  </li>
+  <php>}</php>
+	  <if condition="($searchTool == 'topTask')">
+  <li class="active">
+    <a href="{:U('task/Index/topTask')}" class="on pull-left">
+        <span>顶层任务</span>
+    </a>
+  </li>
+	  </if>
+	  <if condition="($searchTool == 'myTopTask')">
+  <li class="active">
+    <a href="{:U('task/Index/myTopTask')}" class="on pull-left">
+        <span>我的顶层任务</span>
+    </a>
+  </li>
+	  </if>
+  <li class="dropdown <php>if(ACTION_NAME=='index'){</php>active<php>}</php>">
+    <a href="{:U('task/Index/index')}" <php>if(ACTION_NAME=='index'){</php>class="on pull-left"<php>}</php> >
+        <span>热门任务</span>
+    </a>
+	<php>if(ACTION_NAME=='index'){</php>
+	<div class="mode-togglearea" style="">
+		<label for="" title="全览模式">
+			<i class="mode-icon icon-th-large"></i>
+			<input type="radio" name="mode-radio" checked=true onclick="toggleMode('overviewList','minimalList');">
+		</label>
+		<label for="" title="极简模式">
+			<i class="mode-icon icon-th-list"></i>
+			<input type="radio" name="mode-radio" onclick="toggleMode('minimalList','overviewList');">
+		</label>
+	</div>
+	<php>}</php>
+  </li>
+  <li class="dropdown <php>if(ACTION_NAME=='news'){</php>active<php>}</php>">
+    <a href="{:U('task/Index/news')}" <php>if(ACTION_NAME=='news'){</php>class="on pull-left"<php>}</php> >
+        <span>最新任务</span>
+	</a>
+	<php>if(ACTION_NAME=='news'){</php>
+	<div class="mode-togglearea" style="">
+		<label for="" title="全览模式">
+			<i class="mode-icon icon-th-large"></i>
+			<input type="radio" name="mode-radio" checked=true onclick="toggleMode('overviewList','minimalList');">
+		</label>
+		<label for="" title="极简模式">
+			<i class="mode-icon icon-th-list"></i>
+			<input type="radio" name="mode-radio" onclick="toggleMode('minimalList','overviewList');">
+		</label>
+	</div>
+	<php>}</php>
+  </li>
+  <li class="dropdown <php>if(ACTION_NAME=='followstask'){</php>active<php>}</php>">
+    <a href="{:U('task/Index/followstask')}" <php>if(ACTION_NAME=='followstask'){</php>class="on pull-left"<php>}</php> >
+        <span>我关注的人的任务</span>
+    </a>
+	<php>if(ACTION_NAME=='followstask'){</php>
+	<div class="mode-togglearea" style="">
+		<label for="" title="全览模式">
+			<i class="mode-icon icon-th-large"></i>
+			<input type="radio" name="mode-radio" checked=true onclick="toggleMode('overviewList','minimalList');">
+		</label>
+		<label for="" title="极简模式">
+			<i class="mode-icon icon-th-list"></i>
+			<input type="radio" name="mode-radio" onclick="toggleMode('minimalList','overviewList');">
+		</label>
+	</div>
+	<php>}</php>
+  </li>
+<php>}</php>
+</ul>
+</div>
+

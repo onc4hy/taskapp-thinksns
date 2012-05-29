@@ -1,0 +1,384 @@
+
+{:W('Weibo',array('tpl_name'=>'task_share_weibo','button_title'=>'分享'))}
+<div class="TaskBox">
+  <div class="LogList"><!-- 好友任务 begin  -->
+    <ul>
+      <php>foreach( $data as $vo){</php>
+      <li class="lineD_btm">
+        <div style=" margin-left:0px;">
+          <php>if( !((3 == $vo['private'] && $vo['uid'] != $mid) || (1 == $vo['private'] && !friend_areFriends( $mid,$vo['uid'] ))) ){</php>
+			<php>
+				$fieldsetClass = "collapsed";
+				$divStyle = "display:none;";
+			</php>
+			<fieldset class="collapsible {$fieldsetClass}">
+				<legend class="" onclick="toggleFieldset(this);">
+					<span class="">
+						<php>
+							$levelCssStyle = "";
+							if (!empty($vo['level'])) {
+								$levelHtml = str_repeat("&nbsp;&nbsp;",$vo['level']);
+							}
+						</php>
+						<span class="level" style="">{$levelHtml}</span>
+						#{$vo['id']}&nbsp;{$vo['title']}&nbsp;【
+								<span class="label">任务状态</span>
+								<span class="" title="任务状态">
+									{$task_statusType_list[$vo['task_status']]['name']}
+								</span>|
+								<span class="label">任务优先级</span>
+								<span class="" title="任务优先级">
+									{$task_priorityType_list[$vo['task_priority']]['name']}
+								</span>|
+								<span class="" title="开始日期">
+									{$vo['start_date']|default=''}
+								</span>|
+								<span class="" title="计划完成日期">
+									{$vo['due_date']|default=''}
+								</span>|
+								<span class="" title="%完成度">
+									<php>
+										$progress = $vo['done_ratio'];
+										$closed = $progress;
+										$todo = 100 - $closed;
+									</php>
+									{$closed}%
+								</span>|
+					】</span>
+				</legend>
+				<div class="" style="{$divStyle}">
+					<php>
+						$fieldsetClass = "";
+						$divStyle = "";
+					</php>
+				  <p class="subfieldset alR">
+					<span class="right">
+						<php>
+						$tpl_data = array('author'=>getUserName($vo['uid']),'title'=>$vo['title'],'body'=>getShort(text($vo['content']),80),'url'=>U('task/Index/show',array('id'=>$vo['id'],'mid'=>$vo['uid'])));
+						$tpl_data = urlencode(serialize($tpl_data));
+						//$param_data = urlencode(serialize(array('has_status'=>1,'is_success_status'=>1,'status_title'=>'发布成功')));
+						</php>
+						<input type="button" name="Submit" value="分享" class="BtnShare" onclick="_widget_weibo_start('', '{$tpl_data}', '{$param_data}');"/>
+					</span>
+				  <php>if(ACTION_NAME == 'my' && $vo['uid']==$ts['user']['uid']) {</php>
+					<a href="{:U('task/Index/edit', array('id'=>$vo['id'], 'mid'=>$vo['uid']))}">编辑</a> | <a href="javascript:deleteTask('{:U('task/Index/doDeleteTask', array('id'=>$vo['id'], 'mid'=>$vo['uid']))}')">删除</a>&nbsp;&nbsp;
+				  <php>}else {</php>
+					<space uid="vo.uid" target="_blank">{uname}</space>
+					{$vo.uid|getUserGroupIcon} 
+				  <php>}</php>
+					<span class="cGray2">{$vo['cTime']|friendlyDate}</span>
+				  </p>
+					<fieldset class="subfieldset collapsible {$fieldsetClass}">
+						<legend class="" onclick="toggleFieldset(this);">
+							<span class="info">任务属性</span>				
+						</legend>
+						<div class="" style="{$divStyle}">
+							<table class="property">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>父任务</th>
+										<th>任务类型</th>
+										<th>任务状态</th>
+										<th>任务优先级</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><a href="{:U('task/Index/show',array('id'=>$vo['id'],'mid'=>$mid))}">{$vo['id']|default=''}</a></td>
+										<td>
+											<a target="_blank" href="{:U("task/index/show",array("id"=>$vo['parent_id']['id'],'mid'=>$uid))}">
+											<php>
+											echo $task_parentTask_list[$vo['parent_id']['id']]['title'];
+											</php>
+											</a>
+										</td>
+										<td>
+										{$task_type_list[$vo['task_type']]['name']}
+										</td>
+										<td>
+										{$task_statusType_list[$vo['task_status']]['name']}
+										</td>
+										<td>
+										{$task_priorityType_list[$vo['task_priority']]['name']}
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<table class="property">
+								<thead>
+									<tr>
+										<th>开始日期</th>
+										<th>计划完成日期</th>
+										<th>预期时间</th>
+										<th>耗时</th>
+										<th>%完成度</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>{$vo['start_date']|default=''}</td>
+										<td>{$vo['due_date']|default=''}</td>
+										<td>{$vo['estimated_time']|default=''}</td>
+										<td>{$vo['spent_time']|default=''}</td>
+											<php>
+												$progress = $vo['done_ratio'];
+												$closed = $progress;
+												$todo = 100 - $closed;
+											</php>
+										<td class="progress">
+											<table class="progress" style="width:60%;">
+												<tbody>
+													<tr>
+														<td class="closed" style="width:{$closed}%">&nbsp;</td>
+														<td class="todo" style="width:{$todo}%">&nbsp;</td>
+													</tr>
+												</tbody>
+											</table>
+											{$closed}%
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<table class="property">
+								<thead>
+									<tr>
+										<th>相关网摘及信息</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											<textarea rows="3" style="width:95%;">{$vo['rel_digest']}</textarea>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</fieldset>
+					<php>
+						$fieldsetClass = "";
+						$divStyle = "";
+					</php>
+					<fieldset class="subfieldset collapsible {$fieldsetClass}">
+						<legend class="" onclick="toggleFieldset(this);">
+							<span class="danger">执行力跟踪</span>
+						</legend>
+						<div class="" style="{$divStyle}">
+							<table class="property">
+								<thead>
+									<tr>
+										<th style="width:20px;">#</th>
+										<th>行为类型</th>
+										<th>开始日期</th>
+										<th>开始时间</th>
+										<th>停止日期</th>
+										<th>停止时间</th>
+										<th>耗时</th>
+										<th>%完成度</th>
+										<th>描述</th>
+									</tr>
+								</thead>
+								<tbody>
+									<php>
+										$i = 0;
+										foreach($vo['detail_list'] as $item) {
+										$i = $i+1;
+									</php>
+									<tr>
+										<td>{$i}#</td>
+										<td>
+										<php>echo $task_behaviorType_list[$item['behavior_type']]['name'];</php>
+										</td>
+										<td>
+										{$item['start_date']}
+										</td>
+										<td>
+										{$item['start_time']}
+										</td>
+										<td>
+										{$item['stop_date']}
+										</td>
+										<td>
+										{$item['stop_time']}
+										</td>
+										<td>
+											<div class="" style="word-break:break-all;">
+										{$item['spent_time']}
+											</div>
+										</td>
+											<php>
+												$progress = $item['done_ratio'];
+												$closed = $progress;
+												$todo = 100 - $closed;
+											</php>
+										<td class="progress">
+											<table class="progress" style="width:60%;">
+												<tbody>
+													<tr>
+														<td class="closed" style="width:{$closed}%">&nbsp;</td>
+														<td class="todo" style="width:{$todo}%">&nbsp;</td>
+													</tr>
+												</tbody>
+											</table>
+											{$closed}%
+										</td>
+										<td>
+											<div class="" style="word-break:break-all;">
+										{$item['description']}
+											</div>
+										</td>
+									</tr>
+									<php>								
+										}
+									</php>
+									<tr>
+										<td class="alL detailSummaryLabel">摘要说明</td>
+										<td class="alR" colspan="99">
+											<div class="alR detailSummary">{$vo['detail_summary']}</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</fieldset>
+					<php>
+						$fieldsetClass = "";
+						$divStyle = "";
+					</php>
+					<fieldset class="subfieldset collapsible {$fieldsetClass}">
+						<legend class="" onclick="toggleFieldset(this);">
+							<span class="warning">子任务</span>				
+						</legend>
+						<div class="" style="{$divStyle}">
+							<table class="property">
+								<thead>
+									<tr>
+										<th>任务Id</th>
+										<th>任务名称</th>
+										<th>任务状态</th>
+										<th>任务优先级</th>
+										<th>开始日期</th>
+										<th>计划完成日期</th>
+										<th>%完成度</th>
+									</tr>
+								</thead>
+								<tbody>
+									<php>
+										foreach($vo['child_list'] as $item) {
+									</php>
+									<tr>
+										<td><a href="<php>echo U('task/Index/show', array('id'=>$item['id'],'mid'=>$uid));</php>">
+										{$item['id']}
+										</a>
+										</td>
+										<td><a href="<php>echo U('task/Index/show', array('id'=>$item['id'],'mid'=>$uid));</php>">
+										{$item['title']}
+										</a>
+										</td>
+										<td>
+										<php>echo $task_statusType_list[$item['task_status']]['name'];</php>
+										</td>
+										<td>
+										<php>echo $task_priorityType_list[$item['task_priority']]['name'];</php>
+										</td>
+										<td>
+										{$item['start_date']}
+										</td>
+										<td>
+										{$item['due_date']}
+										</td>
+											<php>
+												$progress = $item['done_ratio'];
+												$closed = $progress;
+												$todo = 100 - $closed;
+											</php>
+										<td class="progress">
+											<table class="progress" style="width:60%;">
+												<tbody>
+													<tr>
+														<td class="closed" style="width:{$closed}%">&nbsp;</td>
+														<td class="todo" style="width:{$todo}%">&nbsp;</td>
+													</tr>
+												</tbody>
+											</table>
+											{$closed}%
+										</td>
+									</tr>
+									<php>								
+										}
+									</php>
+								</tbody>
+							</table>
+						</div>
+					</fieldset>
+					<fieldset class="subfieldset collapsible">
+						<legend class="" onclick="toggleFieldset(this);">任务说明</legend>
+						<div class="">
+							<p style="margin:5px 0px;" class="f14px roundbgF6">{$vo['content']}</p>
+						</div>
+					</fieldset>
+					<p class="subfieldset cGray2 alR">分类:
+					<php>
+					if ($vo['uid'] == $ts['user']['uid'])
+						$url = U('task/Index/my', array('cateId'=>$vo['category']));
+					else
+						$url = U('task/Index/personal', array('cateId'=>$vo['category'], 'uid'=>$vo['uid']));
+					</php>
+					<a href="{$url}">{$vo['category_title']}</a>
+					<i class="vline">|</i>
+					<a href="{:U('task/Index/show', array('id'=>$vo['id'], 'mid'=>$vo['uid']))}">标签:</a>
+					<php>
+						foreach($vo['tags'] as $tag) {
+							$url = U('task/Index/tag', array('tagId'=>$tag['id']));
+					</php>
+					<a href="{$url}">{$tag['name']}</a>
+					<php>
+						}
+					</php>
+					<i class="vline">|</i>
+					<a href="{:U('task/Index/show', array('id'=>$vo['id'], 'mid'=>$vo['uid']))}">阅读</a>({$vo['readCount']})
+					<i class="vline">|</i>
+					<a href="{:U('task/Index/show', array('id'=>$vo['id'], 'mid'=>$vo['uid']))}#comment">评论</a>({$vo['commentCount']})
+					</p>
+				</div>
+			</fieldset>
+          <php>}</php>
+          <php>if( 3 == $vo['private'] && $vo['uid'] != $mid ){</php>
+          <div class="bg_msg">
+            <div class="bg_msg_btm">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="40" align="center"><img src="../Public/images/ico_yaoshi.png" width="20" height="20" /></td>
+                  <td>本任务需要密码才能访问</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <php>}elseif( 1 == $vo['private'] && !friend_areFriends( $mid,$vo['uid'] ) && $vo['uid'] != $mid){</php>
+          <div class="bg_msg">
+            <div class="bg_msg_btm">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="40" align="center"><img src="../Public/images/ico_suo.png" width="20" height="20" /></td>
+                  <td>只有主人的好友可以查看此任务</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <php>}else{</php>
+            <php>
+            // 过滤HTML代码
+            //$vo['content'] = strip_tags($vo['content']);
+            </php>
+          <php>}</php>
+        </div>
+      </li>
+      <php>}</php>
+    </ul>
+    <div class="page">{$html}</div>
+  </div>
+  <!-- 好友任务 end  --> 
+  <div class="c"></div>
+</div>
+

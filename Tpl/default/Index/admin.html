@@ -1,0 +1,64 @@
+
+<include file="__THEME__/header" />
+<script type="text/javascript" src="../Public/Js/Common.js"></script>
+<div class="content_holder">
+<div class="content no_bg"><!-- 内容 begin  -->
+  <include file="../Public/_task_header" />
+  <div class="main no_l"><!-- 画布 begin  -->
+    <div class="mainbox">
+      <include file="../Public/_right" />
+      <div class="mainbox_appC">
+        <div class="TaskBox">
+          <div class="LogList"><!-- 好友任务 begin  -->
+            <div class="alR"><a href="__URL__&act=my">返回我的任务</a></div>
+            <ul>
+              <li class="lineD_btm" style="margin:0px;">
+                <div class="left">
+                  <input name="" type="text" class="text" id="insertCategory" onBlur="this.className='text'" onFocus="this.className='text2'" style="width:540px;" />
+                  <input name="button" type="submit"  class="btn_b" id="button" onclick="addCategory( $( '#insertCategory' ).val() )"value="增加分类" />
+                </div>
+                <div class="left cGray2" style="width: 50%;"> </div>
+                <div class="left" style="width: 10%;"></div>
+              </li>
+              <li class="cGray2 lineD_btm" style="margin:0px;">
+                <div class="left" style="width: 40%;">名称</div>
+                <div class="left" style="width: 50%;">任务数目</div>
+                <div class="left" style="width: 9%;">操作</div>
+              </li>
+              <form action="__URL__&act=editCategory" method="post">
+                <volist name="category" id="vo">
+                  <li class="lineD_btm" style="margin:0px;" id ="cate{$vo['id']}">
+                    <div class="left" style="width: 40%;">
+                      <php>if( $vo['uid'] != 0 ){</php>
+                      <input name="name[{$vo['id']}]" style="width:200px;" type="text" class="text" onBlur="this.className='text'" onFocus="this.className='text2'" value="{$vo['name']}"/>
+                      <php>}else{</php>
+                      {$vo['name']}
+                      <php>}</php>
+                    </div>
+                    <div id="c{$vo['id']}" class="left" style="width: 50%;">{$vo['count']}</div>
+                    <php>if( $vo['uid'] != 0 ){</php>
+                    <div class="left" style="width: 9%;"><a href="javascript:deleteCategory( {$vo['id']})">[移除]</a></div>
+                    <php>}</php>
+                  </li>
+                </volist>
+                <li style="margin:0px;">
+                  <div class="left" style="width: 40%;">
+                    <input type="submit" class="btn_b"  id="button2" value="保存" />
+                  </div>
+                  <div class="left" style="width: 50%;"></div>
+                  <div class="left" style="width: 9%;"></div>
+                </li>
+              </form>
+            </ul>
+          </div>
+        </div>
+        <div class="c"></div>
+      </div>
+      
+    </div>
+    <!-- 内容 end --> 
+  </div>
+</div>
+</div>
+<include file="../Public/_footer" />
+

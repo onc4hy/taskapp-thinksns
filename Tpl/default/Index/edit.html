@@ -1,0 +1,432 @@
+
+<include file="__THEME__/header" />
+<include file="__THEME__/editor" />
+<script type="text/javascript" src="../Public/Js/Common.js"></script>
+<script type="text/javascript" src="../Public/Js/addTask.js"></script>
+
+<script type="text/javascript" src="../Public/Js/datePicker/date.js"></script>
+<script type="text/javascript" src="../Public/Js/datePicker/jquery.datePicker.js"></script>
+<link type="text/css" rel="stylesheet" href="../Public/Js/datePicker/datePicker.css"/>
+<script type="text/javascript">
+	$(function(){
+		Date.format = "yyyy-mm-dd";
+		Date.dayNames = ['日', '一', '二', '三', '四', '五', '六'];
+		Date.monthNames = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+
+		$('.date-pick').datePicker({autoFocusNextInput: true});
+	});
+</script>
+
+<div class="content_holder">
+<div class="content no_bg">
+  <include file="../Public/_task_header" />
+  <div class="main no_l">
+    <div class="mainbox">
+        <include file="../Public/_right" />
+        <div class="mainbox_appC">
+        <div class=page_title> 
+            <h2>
+                <span class="f12px fn right"><a href="javascript:history.back( -1 )">&lt;&lt;返回上一页</a></span>
+                修改任务
+            </h2>
+        </div>
+        <div class="TaskBox">
+		<form name="editTask" action="{$link}" method="post" onsubmit="return check()">
+            <div class="LogList">
+              <ul class="edit">
+                <li style="padding:0;">
+                  <label>标题: &nbsp;</label>
+                  <div class="c1">
+                    <select name="category" id="select" class="middle" onchange="javascript:changeCategory($(this))" class="text mr5">
+                      <php>foreach( $task_category_list as $value ){</php>
+                      <option value="{$value['id']}" <eq name="category['id']" value="$value['id']">selected=selected</eq> title="{$value['name']}">{$value['name']|getShort=8}</option>
+                      <php>}</php>
+                      <optgroup id="group">
+						<option value="0">+添加分类</option>
+                      </optgroup>
+                    </select> 
+                    <input id="title" name="title" type="text" class="text" style="width:363px;" onBlur="this.className='text'" onFocus="this.className='text2'" maxlength="25" value="{$title}" />
+					
+                    <select name="private" class="privateTypeList" onchange="javascript:changeStatus($(this))" class="text mr5">
+                      <php>foreach( $task_privateType_list as $value ){</php>
+                      <option value="{$value['id']}" <eq name="private['id']" value="$value['id']">selected=selected</eq> title="{$value['name']}">{$value['name']|getShort=8}</option>
+                      <php>}</php>
+                    </select> 
+                  </div>
+                </li>
+                <li style="padding:0;">
+					<fieldset class="collapsible">
+						<legend class="" onclick="toggleFieldset(this);">
+							<span class="info">任务属性</span>				
+						</legend>
+						<div class="">
+							<table class="property">
+								<thead>
+									<tr>
+										<th>
+										父任务
+										</th>
+										<th>
+										任务类型
+										</th>
+										<th>
+										任务状态
+										</th>
+										<th>
+										任务优先级
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+										  <select name="parent_id" id="" onchange="changeParentTask(this);">
+											<option value="">无</option>
+										  <php>foreach($task_parentTask_list as $item) {</php>
+										  <option value="{$item['id']}" <eq name="parent_id" value="$item['id']">selected=selected</eq>>{$item['title']}</option>
+										  <php>}</php>
+											  <optgroup>
+												<option value="0">+新建任务</option>
+											  </optgroup>
+										  </select>
+										</td>
+										<td> 
+											<select name="task_type" class="edit">
+											  <php>foreach( $task_type_list as $value ){</php>
+											  <option value="{$value['id']}" <eq name="task_type['id']" value="$value['id']">selected=selected</eq> title="{$value['name']}">{$value['name']|getShort=8}</option>
+											  <php>}</php>
+											</select>
+										</td>
+										<td> 
+											<select name="task_status" class="edit">
+											  <php>foreach( $task_statusType_list as $value ){</php>
+											  <option value="{$value['id']}" <eq name="task_status['id']" value="$value['id']">selected=selected</eq> title="{$value['name']}">{$value['name']|getShort=8}</option>
+											  <php>}</php>
+											</select>
+										</td>
+										<td> 
+											<select name="task_priority" class="edit">
+											  <php>foreach( $task_priorityType_list as $value ){</php>
+											  <option value="{$value['id']}" <eq name="task_priority['id']" value="$value['id']">selected=selected</eq> title="{$value['name']}">{$value['name']|getShort=8}</option>
+											  <php>}</php>
+											</select>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<table class="property">
+								<thead>
+									<tr>
+										<th>
+										开始日期
+										</th>
+										<th>
+										计划完成日期
+										</th>
+										<th>
+										预期时间
+										</th>
+										<th>
+										耗时
+										</th>
+										<th>
+										%完成度
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td> 
+										  <input type="text" name="start_date" value="{$start_date}" class="date-pick edit" id="start_date_input">
+										</td>
+										<td> 
+										  <input type="text" name="due_date" value="{$due_date}" class="date-pick edit" id="due_date_input">
+										</td>
+										<td>
+										  <input type="text" name="estimated_time" value="{$estimated_time}" class="edit">
+										</td>
+										<td>
+										  <input type="text" name="spent_time" value="{$spent_time}" class="edit">
+										</td>
+										<td> 
+										  <input type="text" name="done_ratio" value="{$done_ratio}" class="input-append edit">
+										  <span class="add-on">%</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<table class="property">
+								<thead>
+									<tr>
+										<th>
+										相关网摘及信息
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td> 
+										  <textarea id="rel_digest" name="rel_digest" rows="3" style="width:95%;height:100px;">{$rel_digest}</textarea>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</fieldset>
+					<fieldset class="collapsible">
+						<legend class="" onclick="toggleFieldset(this);"><span class="danger">执行力跟踪</span></legend>
+						<div class="">
+							<table class="property" id="detail_table">
+								<thead>
+									<tr>
+										<th>
+											<a href="javascript:void();" onclick="addDetailRow(this,'{$id}','detail_table');" title="新增"><i class="icon-plus-sign"></i>新增</a>
+										</th>
+										<script type="text/javascript">
+											var task_behaviorType_list = "";
+											<php>foreach($task_behaviorType_list as $item) {</php>
+											task_behaviorType_list = task_behaviorType_list + "<option value='{$item['id']}'>{$item['name']}</option>";
+											<php>}</php>
+										</script>
+										<th>行为类型</th>
+										<th>开始日期</th>
+										<th>开始时间</th>
+										<th>停止日期</th>
+										<th>停止时间</th>
+										<th>耗时</th>
+										<th>%完成度</th>
+										<th>描述</th>
+									</tr>
+								</thead>
+								<tbody>
+									<php>
+										$i = 0;
+										foreach($task_detail_list as $item) {
+										$i = $i+1;
+									</php>
+									<tr>
+										<td>
+											<span class="right">
+											{$i}#
+											</span>
+											<span class="left">
+											<a href="javascript:void();" onclick="submitRemoveDetailRow('{$item['id']}')">
+											<i class="icon-minus-sign" title="删除"></i>
+											</a>
+											</span>
+										</td>
+										<td>
+										<php>echo $task_behaviorType_list[$item['behavior_type']]['name'];
+										</php>
+										</td>
+										<td>
+										<div class="" style="">
+										{$item['start_date']}
+										</div>
+										</td>
+										<td>
+										<div class="" style="">
+										{$item['start_time']}
+										</div>
+										</td>
+										<td>
+										<div class="" style="">
+										{$item['stop_date']}
+										</div>
+										</td>
+										<td>
+										<div class="" style="">
+										{$item['stop_time']}
+										</div>
+										</td>
+										<td>
+										<div class="" style="">
+										{$item['spent_time']}
+										</div>
+										</td>
+											<php>
+												$progress = $item['done_ratio'];
+												$closed = $progress;
+												$todo = 100 - $closed;
+											</php>
+										<td class="progress">
+											<table class="progress" style="width:60%;">
+												<tbody>
+													<tr>
+														<td class="closed" style="width:{$closed}%">&nbsp;</td>
+														<td class="todo" style="width:{$todo}%">&nbsp;</td>
+													</tr>
+												</tbody>
+											</table>
+											{$closed}%
+										</td>
+										<td>
+										<div class="" style="word-wrap:break-word;">
+										{$item['description']}
+										</div>
+										</td>
+									</tr>
+									<php>								
+										}
+									</php>
+								</tbody>
+								<tfoot>
+									<tr>
+										<td class="alL detailSummaryLabel">摘要说明</td>
+										<td class="alR" colspan="99">
+											<div class="alR detailSummary">
+											<textarea name="detail_summary" style="width:98%;" class="">{$detail_summary}</textarea>
+											</div>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</fieldset>
+					<fieldset class="collapsible">
+						<legend class="" onclick="toggleFieldset(this);">
+							<span class="warning">子任务</span>				
+						</legend>
+						<div class="" style="">
+							<table class="property" id="child_table">
+								<thead>
+									<th>
+										<a href="javascript:void();" onclick="addChildRow('{$id}')"><i class="icon-plus-sign"></i>添加</a>
+									</th>
+									<th>任务Id</th>
+									<th>任务名称</th>
+									<th>任务状态</th>
+									<th>任务优先级</th>
+									<th>开始日期</th>
+									<th>计划完成日期</th>
+									<th>%完成度</th>
+								</thead>
+								<tbody>
+									<php>
+										foreach($task_child_list as $item) {
+									</php>
+									<tr>
+										<td>
+											<span class="right">
+											<a href="javascript:void();" onclick="removeChildRow('{$item['id']}')"><i class="icon-minus-sign"></i>删除</a>
+											</span>
+										</td>
+										<td><a href="<php> echo U('task/Index/edit',array('id'=>$item['id'],'mid'=>$uid));</php>">
+										{$item['id']}</a>
+										</td>
+										<td><a href="<php> echo U('task/Index/edit',array('id'=>$item['id'],'mid'=>$uid));</php>">
+										{$item['title']}</a>
+										</td>
+										<td>
+										{$task_statusType_list[$item['task_status']]['name']}
+										</td>
+										<td>
+										{$task_priorityType_list[$item['task_priority']]['name']}
+										</td>
+										<td>
+										{$item['start_date']}
+										</td>
+										<td>
+										{$item['due_date']}
+										</td>
+											<php>
+												$progress = $done_ratio;
+												$closed = $progress;
+												$todo = 100 - $closed;
+											</php>
+										<td class="progress">
+											<table class="progress" style="width:60%;">
+												<tbody>
+													<tr>
+														<td class="closed" style="width:{$closed}%">&nbsp;</td>
+														<td class="todo" style="width:{$todo}%">&nbsp;</td>
+													</tr>
+												</tbody>
+											</table>
+											{$closed}%
+										</td>
+									</tr>
+									<php>								
+										}
+									</php>
+									</tr>
+								</tbody>
+								<tfoot>
+								</tfoot>
+							</table>
+						</div>
+					</fieldset>
+                </li>
+                <li style="padding:0;">
+					<fieldset class="collapsible">
+						<legend class="" onclick="toggleFieldset(this);"><span class="">任务说明</span></legend>
+						<div class="c1">
+							<textarea id="content" name="content" style="height:350px;width:95%;">{$content}</textarea>
+						</div>
+					</fieldset>
+                </li>
+                <li style="padding:0;">
+                           
+
+                        <php>if( !empty( $saveId ) ){</php>
+                        <li style="padding:0;">
+                            <div class="c1"></div>
+                        </li>
+                        <php>}</php>
+
+                        <neq name ="attach" value="">
+                            <div class ="attach" style="display:none;">
+                                <volist name ="attach" id="vo"></volist>
+                                <input class="attach{$vo['id']}" type="hidden" name="attach[]" value="{$vo['id']}|{$vo['name']}">
+								<p>
+                                    <span class="attach{$vo['id']}"> [附件] {$vo['name']}</span>
+                                    <span class="attach{$vo['id']}"><a class="attach{$vo['id']}" href="javascript:void(0)" onclick="deleteAttach({$vo['id']})">删除</a></span>
+								</p>
+                                </volist>
+                            </div>
+                        </neq>
+						
+                        <li style="padding:0;">
+						    <label>&nbsp;</label>
+                            <div class="c1" style="height:30px;">
+                                <input id="id" name="id" type="hidden" value="{$id}">
+                                <input id="friendid" name="mention" type="hidden" value="">
+                                <input type="submit" class="btn_b" value="发 表" />
+                                <php>if( !empty( $saveId ) ){</php>
+                                <input id="saveButton" type="button" onclick="javascript:autosave()"class="btn_b" value="存至草稿箱"/> <span id="autoSave" style="display:none;"></span>
+                                <input id="saveId" name="saveId" type="hidden" value="{$saveId}"/>
+                                <php>}else{</php>
+                                <input id="saveButton" type="button" onclick="javascript:history.back(-1)"class="btn_w" value="取消"/>
+                                <php>}</php>
+                            </div>
+                </li>
+              </ul>
+            </div>
+          </form>
+        </div>
+        <div class="c"></div>
+      </div>
+    </div>
+    <div class="c"></div>
+  </div>
+</div>
+</div>
+
+<div id="childTaskOperArea" class="" style="display:none;">
+	<select name="" onchange="">
+	<php>foreach($task_childTask_list as $item) {</php>
+		<option value=""></option>
+	<php>}</php>
+	</select>
+	<button class="btn_b" onclick="confirmChildTask('#childTask');">确定</button>
+	<button class="btn_w" onclick="closeChildTask('#childTask');">取消</button>
+</div>
+
+<script>
+$(document).ready(function(){
+	loadKEditor("content");
+	loadKEditor("rel_digest");
+});
+</script> 
+<include file="__THEME__/footer" />
+

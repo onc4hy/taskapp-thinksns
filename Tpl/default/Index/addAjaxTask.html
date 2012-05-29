@@ -1,0 +1,35 @@
+
+<include file="__THEME__/editor" />
+<script type="text/javascript" src="../Public/Js/addTask.js"></script>
+<form name="addTask" action="__URL__&act=doAddTask" target ="doPostTaskData" method="post" onsubmit="return check();">
+	<div class="layer_send_task">
+		<ul class="edit">
+			<li>
+			<label>标题:</label>
+			<div class="c1">
+				<select name="category" id="select" onchange="javascript:changeCategory($(this))" class="text mr5">
+					<php>foreach( $category as $value ){</php>
+					<option value="{$value['id']}">{$value['name']}</option>
+					<php>}</php>
+				</select>
+				<input id="title" name="title" type="text" class="text" style="width:226px" onBlur="this.className='text'" onFocus="this.className='text2'" maxlength="25" />
+			</div>
+			</li>
+			<li>
+			<label>内容:</label>
+			<div class="c1"><textarea id="weibo_type_content" name="content" style="height:350px;"></textarea></div>
+			</li>
+			<li>
+            <label>&nbsp;</label>
+			<div class="c1"><input type="submit" class="btn_b" value="发表" /></div>
+			</li>
+		</ul>
+	</div>
+	<input type="hidden" name="ajax" value="true" />
+</form>
+<script>
+loadEditor('weibo_type_content');
+</script>
+<iframe name="doPostTaskData" id="doPostTaskData" style="display:none;" onload="weibo.plugin.task.onload('doPostTaskData');">
+</iframe>
+

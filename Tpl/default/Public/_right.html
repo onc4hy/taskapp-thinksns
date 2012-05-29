@@ -1,0 +1,147 @@
+<div class="mainbox_appR">
+	<div class="box_create">
+		<a href="{:U('task/Index/addTask')}" title="发表任务" class="btn_task_c"></a>
+		<h4>
+			<a href="{:U('task/Index/my')}">进入我的任务首页</a>
+		</h4>
+	</div>
+
+	<div class="right_box">
+	  <h2>搜索任务</h2>
+	  <div class="body">
+		<form action="{:U('task/Index/search')}" method="GET" name="subform">
+		  <input name="app" type="hidden" value="task"/>
+		  <input name="mod" type="hidden" value="Index"/>
+		  <input name="act" type="hidden" value="search"/>
+		  <span class="left mr5">
+		  <input name="key" type="text" value="{$_GET['key']|t}" class="txt_task_s"/>
+		  </span>
+		  <input type="submit" class="btn_b left" value="搜 索" />
+		</form>
+			<div class="clear"></div>
+			<div class="hLine"></div>
+			<ul class="tools">
+				<li class="topTask"><a href="{:U("task/index/topTask")}">顶层任务</a></li>
+				<li class="myTopTask"><a href="{:U("task/index/myTopTask")}">我的顶层任务</a></li>
+			</ul>
+	  </div>
+	</div>
+
+	<div class="right_box">
+		<div class="title">
+			<ul class="task-tabs nav-tabs">
+				<php>
+					$noticeTabCssClass = "active";
+					$noteTabCssClass = "";
+					$noticeDivCssClass = "active";
+					$noteDivCssClass = "";
+					if ( (ACTION_NAME == "my") || (ACTION_NAME == "edit") || (ACTION_NAME == "addTask")) {
+						$noticeTabCssClass = "";
+						$noteTabCssClass = "active";
+						$noticeDivCssClass = "";
+						$noteDivCssClass = "active";
+					}
+				</php>
+				<li class="{$noticeTabCssClass}">
+					<span onclick="toggleTab(this,'taskNotices');">
+						<i class="icon-bullhorn"></i>
+						任务通告
+					</span>
+				</li>
+				<php>if($uid > 0) {</php>
+				<li class="{$noteTabCssClass}">
+					<span  onclick="toggleTab(this,'taskNotes');">
+						<i class="icon-flag"></i>
+						我的任务便签
+					</span>
+				</li>
+				<php>}</php>
+			</ul>
+		</div>
+		<div class="body">
+			<div class="tab-content">
+				<div class="tab-pane {$noticeDivCssClass}" id="taskNotices">
+					<div class="notices-frame">
+						<php>if(empty($task_notices_list)){</php>暂无任务通告<php>}</php>
+						<ul class="notices" style="">
+						<volist name="task_notices_list" id="vo">
+							<li>
+								<a href="{:U('task/Index/showNotice', array('id'=>$vo['id'], 'mid'=>$vo['uid']))}" title="">{$vo.title}</a>
+							</li>
+						</volist>
+						</ul>
+						<div class="bottom alR">
+							<a href="{:U('task/Index/notices')}">更多>>..</a>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane {$noteDivCssClass}" id="taskNotes">
+					<div class="notes-frame">
+						<php>if(empty($task_notes_list)){</php>暂无我的任务便签<php>}</php>
+						<ul class="notes-tabs">
+						<volist name="task_notes_list" id="vo">
+							<li class="<eq name='i' value='1'>active</eq>">
+								<span onclick="toggleTab(this,'taskNote_'+'{$vo['id']}');">
+								{$vo['title']}
+								</span>
+							</li>
+						</volist>
+						</ul>
+						<div class="tab-content">
+							<volist name="task_notes_list" id="vo">
+							<div id="taskNote_{$vo['id']}" class="tab-pane <eq name='i' value='1'>active</eq>">
+								<fieldset class="collapsible">
+									<legend onclick="toggleFieldset(this);">便签内容</legend>
+									<div>
+										<textarea id="taskNote_{$vo['id']}_content" style="width:95%;height:200px;">{$vo.content}</textarea>
+									</div>
+								</fieldset>
+							</div>
+							</volist>
+						</div>
+						<div class="bottom alR">
+							<a href="{:U('task/Index/notes')}">更多>>..</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="right_box">
+		<h2>推荐任务</h2>
+		<div class="body">
+		<php>if(empty($relist)){</php>暂无推荐任务<php>}</php>
+		<volist name="relist" id="vo">
+			<p class="mb10"><a href="{:U('task/Index/show', array('id'=>$vo['id'], 'mid'=>$vo['uid']))}">{$vo.title}</a></p>
+		</volist>
+		</div>
+	</div>
+	<!-- 我的任务时显示分类和归档 -->
+	<eq name="ACTION_NAME" value="my">
+	<div class="right_box">
+		<h2>任务分类（<span class="cBlue"><a href="{:U('task/Index/admin')}" style="padding-left: 0px;" >管理</a></span>）</h2>
+		<div class="body">
+			<ul class="lh25">
+				<li><a href="{:U('task/Index/my')}">所有分类</a></li>
+				<php>foreach( $category as $key=>$value ) {</php>
+				<li><a href="{:U('task/Index/my', array('cateId'=>$value['id']))}">{$value['name']} ( {$value['count']} )</a></li>
+			<php>}</php>
+			</ul>
+		</div>
+	</div>
+	</eq>
+	<eq name="ACTION_NAME" value="my">
+	{:W( 'FileAway', $file_away)}
+	</eq>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	config = "simple";
+	<volist name="task_notes_list" id="vo">
+	loadSimpleKEditor("taskNote_{$vo['id']}_content",config);
+	</volist>
+});
+</script> 
+

@@ -1,0 +1,369 @@
+	
+<include file="__THEME__/header" />
+<script type="text/javascript" src="../Public/Js/Common.js" ></script>
+<script>
+$(document).ready(function(){
+	photo_resize('.img_resize');
+});
+</script>
+
+{:W('Weibo',array('tpl_name'=>$mid==$uid?'task_create_weibo':'task_share_weibo','button_title'=>'分享'))}
+<php>
+$tpl_data = array('author'=>getUserName($uid),'title'=>text($title),'body'=>getShort(text($content),80),'url'=>U('task/Index/show',array('id'=>$id,'mid'=>$uid)));
+$tpl_data = urlencode(serialize($tpl_data));
+$param_data = urlencode(serialize(array('has_status'=>1,'is_success_status'=>1,'status_title'=>'发布成功')));
+</php>
+<div class="content_holder">
+<div class="content no_bg"><!-- 内容 begin  -->
+  <include file="../Public/_task_header" />
+  <div class="main no_l"><!-- 画布 begin  -->
+    <div class="mainbox">
+
+    <include file="../Public/_right" />
+
+    <div class="mainbox_appC">
+    <div class="person_info">
+      <div class="userPic" ><space uid="uid" >{uavatar}</space></div>
+      <div style="padding-left:70px;">
+        <h2>
+            <span class="right fn f12px"><a id="test" href="javascript:history.back( -1 )">返回上一页</a></span>
+            <space uid="uid" class="null">{uname}</space> 的任务
+        </h2>
+		<p>
+			<em>发布时间：{$cTime|friendlyDate}</em>
+		<eq name="isOwner" value="1">
+			 [ <a href="{:U('task/Index/my', array('cateId'=>$category['id']))}">{$category_title}</a> ]
+        </p>
+        <p>
+			<a href="{:U('task/Index/my')}" >我的全部任务</a>
+		<else/>
+             [ <a href="{:U('task/Index/personal', array('uid'=>$uid,'cateId'=>$category['id']))}">{$category['name']}</a> ]
+        </p>
+        <p>
+			<a href="{:U('task/Index/personal', array('uid'=>$uid))}" >{$uid|getUserName}的全部任务</a>
+		</eq>
+		</p>
+      </div>
+    </div>
+    
+    <div class="TaskBox">
+      <div class="">
+        <div class="btmline lh30 mLR15">
+            <div class="right">
+                <a href="{:U('task/Index/show', array('id'=>$id, 'action'=>'lt', 'mid'=>$uid))}">上一篇</a> / <a href="{:U('task/Index/show', array('id'=>$id, 'action'=>'gt', 'mid'=>$uid))}">下一篇</a>
+            </div>
+            第 {$num}/{$count} 篇任务
+        </div>
+        <div style="margin-bottom:20px; " class="mLR15">
+          <div class="tit_log">
+            <h1>
+                <span class="right">
+                <input type="button" name="Submit" value="分享" class="BtnShare" onclick="_widget_weibo_start('', '{$tpl_data}');" id="BtnShare_{$id}"/>
+                </span><strong># {$id}&nbsp;{$title}</strong>
+            </h1>
+            <p>
+                <eq name="isOwner" value="1">
+                <a href="{:U('task/Index/edit', array('id'=>$id, 'mid'=>$uid))}">编辑</a>&nbsp;&nbsp;
+                <span class="cGray2">|</span>&nbsp;&nbsp;
+                <a href="javascript:deleteTask('{:U('task/Index/doDeleteTask', array('id'=>$id))}')">删除</a>&nbsp;&nbsp;
+                </eq>
+            </p>
+          </div>
+			<fieldset class="collapsible">
+				<legend class="" onclick="toggleFieldset(this);">
+					<span class="info">任务属性</span>				
+				</legend>
+				<div class="" style="">
+					<table class="property">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>父任务</th>
+								<th>任务类型</th>
+								<th>任务状态</th>
+								<th>任务优先级</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{$id}</td>
+								<td>
+									<a target="_blank" href="{:U("task/index/show",array("id"=>$parent_id['id'],"mid"=>$uid))}">
+									<php>
+									echo $task_parentTask_list[$parent_id]['title'];
+									</php>
+									</a>
+								</td>
+								<td>
+								{$task_type_list[$task_type]['name']}
+								</td>
+								<td>
+								{$task_statusType_list[$task_status]['name']}
+								</td>
+								<td>
+								{$task_priorityType_list[$task_priority]['name']}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="property">
+						<thead>
+							<tr>
+								<th>开始日期</th>
+								<th>计划完成日期</th>
+								<th>预期时间</th>
+								<th>耗时</th>
+								<th>%完成度</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>{$start_date}</td>
+								<td>{$due_date}</td>
+								<td>{$estimated_time}</td>
+								<td>{$spent_time}</td>
+									<php>
+										$progress = $done_ratio;
+										$closed = $progress;
+										$todo = 100 - $closed;
+									</php>
+								<td class="progress">
+									<table class="progress" style="width:60%;">
+										<tbody>
+											<tr>
+												<td class="closed" style="width:{$closed}%">&nbsp;</td>
+												<td class="todo" style="width:{$todo}%">&nbsp;</td>
+											</tr>
+										</tbody>
+									</table>
+									{$closed}%
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="property">
+						<thead>
+							<tr>
+								<th>相关网摘及信息</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									{$rel_digest}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+			<fieldset class="collapsible">
+				<legend class="" onclick="toggleFieldset(this);">
+					<span class="danger">执行力跟踪</span>
+				</legend>
+				<div class="" style="">
+					<table class="property">
+						<thead>
+							<tr>
+								<th style="width:20px;">#</th>
+								<th>行为类型</th>
+								<th>开始日期</th>
+								<th>开始时间</th>
+								<th>停止日期</th>
+								<th>停止时间</th>
+								<th>耗时</th>
+								<th>%完成度</th>
+								<th>描述</th>
+							</tr>
+						</thead>
+						<tbody>
+							<php>
+								$i = 0;
+								foreach($task_detail_list as $item) {
+								$i = $i+1;
+							</php>
+							<tr>
+								<td>{$i}#</td>
+								<td>
+								<php>echo $task_behaviorType_list[$item['behavior_type']]['name'];</php>
+								</td>
+								<td>
+								{$item['start_date']}
+								</td>
+								<td>
+								{$item['start_time']}
+								</td>
+								<td>
+								{$item['stop_date']}
+								</td>
+								<td>
+								{$item['stop_time']}
+								</td>
+								<td>
+									<div class="" style="word-break:break-all;">
+								{$item['spent_time']}
+									</div>
+								</td>
+									<php>
+										$progress = $done_ratio;
+										$closed = $progress;
+										$todo = 100 - $closed;
+									</php>
+								<td class="progress">
+									<table class="progress" style="width:60%;">
+										<tbody>
+											<tr>
+												<td class="closed" style="width:{$closed}%">&nbsp;</td>
+												<td class="todo" style="width:{$todo}%">&nbsp;</td>
+											</tr>
+										</tbody>
+									</table>
+									{$closed}%
+								</td>
+								<td>
+									<div class="" style="word-break:break-all;">
+								{$item['description']}
+									</div>
+								</td>
+							</tr>
+							<php>								
+								}
+							</php>
+							<tr>
+								<td class="alL detailSummaryLabel">摘要说明</td>
+								<td class="alR" colspan="99">
+									<div class="alR detailSummary">{$detail_summary}</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+			<fieldset class="collapsible">
+				<legend class="" onclick="toggleFieldset(this);">
+					<span class="warning">子任务</span>				
+				</legend>
+				<div class="" style="">
+					<table class="property">
+						<thead>
+							<tr>
+								<th>任务Id</th>
+								<th>任务名称</th>
+								<th>任务状态</th>
+								<th>任务优先级</th>
+								<th>开始日期</th>
+								<th>计划完成日期</th>
+								<th>%完成度</th>
+							</tr>
+						</thead>
+						<tbody>
+							<php>
+								foreach($task_child_list as $item) {
+							</php>
+							<tr>
+								<td>
+								{$item['id']}
+								</td>
+								<td>
+								{$item['title']}
+								</td>
+								<td>
+								{$task_statusType_list[$task_status]['name']}
+								</td>
+								<td>
+								{$task_priorityType_list[$task_priority]['name']}
+								</td>
+								<td>
+								{$item['start_date']}
+								</td>
+								<td>
+								{$item['due_date']}
+								</td>
+									<php>
+										$progress = $item['done_ratio'];
+										$closed = $progress;
+										$todo = 100 - $closed;
+									</php>
+								<td class="progress">
+									<table class="progress" style="width:60%;">
+										<tbody>
+											<tr>
+												<td class="closed" style="width:{$closed}%">&nbsp;</td>
+												<td class="todo" style="width:{$todo}%">&nbsp;</td>
+											</tr>
+										</tbody>
+									</table>
+									{$closed}%
+								</td>
+							</tr>
+							<php>								
+								}
+							</php>
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+          <php>if( $isOwner == 0 && $private == 2 ){</php>
+          <div class="bg_msg">
+            <div class="bg_msg_btm">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="40" align="center"><img src="../Public/images/ico_suo.png" width="20" height="20" /></td>
+                  <td>只有主人可以查看此任务</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <php>}else if($isOwner == 0 && $private == 3){</php>
+          <div class="bg_msg">
+            <div class="bg_msg_btm">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="40" align="center"><img src="../Public/images/ico_yaoshi.png" width="20" height="20" /></td>
+                  <td colspan="3">本任务需要密码才能访问</td>
+                </tr>
+                <form method="post" action="">
+                  <tr>
+                    <td height="50" align="center">&nbsp;</td>
+                    <td width="37">密码:</td>
+                    <td width="140"><input name="password" type="password" class="text" id="title" onfocus="this.className='text2'" onblur="this.className='text'" size="20" maxlength="30"/></td>
+                    <td width="71"><input type="submit" value="确定" class="btn_b"/></td>
+                  </tr>
+                </form>
+              </table>
+            </div>
+          </div>
+          <php>}elseif( $isOwner == 0 && $private == 1 && false == $isFriend){</php>
+          <div class="bg_msg">
+            <div class="bg_msg_btm">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td width="40" align="center"><img src="../Public/images/ico_suo.png" width="20" height="20" /></td>
+                  <td>只有主人的好友可以查看此任务</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <php>}else{</php>
+			<fieldset class="collapsible">
+				<legend class="" onclick="toggleFieldset(this);">任务说明</legend>
+				<div class="f14px roundbgF6">
+					{$content}
+				</div>
+			</fieldset>
+            <neq name="mTime" value="0"><div class="cGray2 lh30">最后修改时间: {$mTime|friendlyDate}</div></neq>
+          <php>} </php>
+          
+        </div>
+        <div>{:W('Comment',array('type'=>'task','appid'=>$id, 'author_uid'=>$uid, 'title'=>$title, 'url'=>U('task/Index/show',array('id'=>$id,'mid'=>$uid)), 'table'=>'task','id_field'=>'id','comment_count_field'=>'commentCount'))}</div>
+      </div>
+    </div>
+    <div class="c"></div>
+    </div>
+    </div>
+  </div>
+  <div class="c"></div>
+</div>
+</div>
+<include file="../Public/_footer" />
+

@@ -1,0 +1,207 @@
+
+<include file="__THEME__/header" />
+<include file="__THEME__/editor" />
+<script type="text/javascript" src="../Public/Js/Common.js"></script>
+<script type="text/javascript" src="../Public/Js/addTask.js"></script>
+
+<script type="text/javascript" src="../Public/Js/datePicker/date.js"></script>
+<script type="text/javascript" src="../Public/Js/datePicker/jquery.datePicker.js"></script>
+<link type="text/css" rel="stylesheet" href="../Public/Js/datePicker/datePicker.css"/>
+<script type="text/javascript">
+	$(function(){
+		Date.format = "yyyy-mm-dd";
+		Date.dayNames = ['日', '一', '二', '三', '四', '五', '六'];
+		Date.monthNames = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+
+		$('.date-pick').datePicker({autoFocusNextInput: true}).val(new Date().asString()).trigger('change');
+	});
+</script>
+
+<div class="content_holder">
+<div class="content no_bg">
+  <include file="../Public/_task_header" />
+  <div class="main no_l">
+    <div class="mainbox">
+        <include file="../Public/_right" />
+        <div class="mainbox_appC">
+        <div class=page_title>   
+            <h2>
+                <span class="f12px fn right"><a href="javascript:history.back( -1 )">&lt;&lt;返回上一页</a></span>
+                发布任务
+            </h2>
+        </div>
+        <div class="TaskBox">
+          <form name="addTask" action="__URL__&act=doAddTask" method="post" onsubmit="return check();">
+            <div class="LogList">
+              <ul class="edit">
+                <li style="padding:0;">
+                  <label>标题: &nbsp;</label>
+                  <div class="c1">
+                    <select name="category" id="select" onchange="javascript:changeCategory($(this))" class="text mr5">
+                      <php>foreach( $task_category as $value ){</php>
+                      <option value="{$value['id']}" title="{$value['name']}">{$value['name']|getShort=8}</option>
+                      <php>}</php>
+                      <optgroup id="group">
+                      <option value="0">+添加分类</option>
+                      </optgroup>
+                    </select>
+                    <input id="title" name="title" type="text" class="text" style="width:363px" onBlur="this.className='text'" onFocus="this.className='text2'" maxlength="25" />
+					
+                    <select name="private" class="privateTypeList" onchange="javascript:changeStatus($(this))" class="text mr5">
+                      <php>foreach( $task_privateType_list as $value ){</php>
+                      <option value="{$value['id']}" <eq name="private['id']" value="$value['id']">selected=selected</eq> title="{$value['name']}">{$value['name']|getShort=8}</option>
+                      <php>}</php>
+                    </select> 
+                  </div>
+                </li>
+                <li style="padding:0;">
+					<fieldset class="collapsible">
+						<legend class="" onclick="toggleFieldset(this);">
+							<span class="info">任务属性</span>				
+						</legend>
+						<div class="">
+							<table class="property">
+								<thead>
+									<tr>
+										<th>
+										父任务
+										</th>
+										<th>
+										任务类型
+										</th>
+										<th>
+										任务状态
+										</th>
+										<th>
+										任务优先级
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td> 
+											<select name="parent_id" class="edit" onchange="changeParentTask(this);">
+												<option value="">无</option>
+											  <php>foreach( $task_parentTask_list as $value ){</php>
+											  <option value="{$value['id']}" <eq name="parent_id['id']" value="$value['id']">selected=selected</eq> title="{$value['title']}">{$value['title']|getShort=8}</option>
+											  <php>}</php>
+											  <optgroup>
+												<option value="0">+新建任务</option>
+											  </optgroup>
+											</select>
+										</td>
+										<td> 
+											<select name="task_type" class="edit">
+											  <php>foreach( $task_type_list as $value ){</php>
+											  <option value="{$value['id']}" <eq name="task_type['id']" value="$value['id']">selected=selected</eq> title="{$value['name']}">{$value['name']|getShort=8}</option>
+											  <php>}</php>
+											</select>
+										</td>
+										<td> 
+											<select name="task_status" class="edit">
+											  <php>foreach( $task_statusType_list as $value ){</php>
+											  <option value="{$value['id']}" <eq name="task_status['id']" value="$value['id']">selected=selected</eq> title="{$value['name']}">{$value['name']|getShort=8}</option>
+											  <php>}</php>
+											</select>
+										</td>
+										<td> 
+											<select name="task_priority" class="edit">
+											  <php>foreach( $task_priorityType_list as $value ){</php>
+											  <option value="{$value['id']}" <eq name="task_priority['id']" value="$value['id']">selected=selected</eq> title="{$value['name']}">{$value['name']|getShort=8}</option>
+											  <php>}</php>
+											</select>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<table class="property">
+								<thead>
+									<tr>
+										<th>
+										开始日期
+										</th>
+										<th>
+										计划完成日期
+										</th>
+										<th>
+										预期时间
+										</th>
+										<th>
+										耗时
+										</th>
+										<th>
+										%完成度
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td> 
+										  <input type="text" name="start_date" value="{$start_date}" class="date-pick edit" id="start_date_input">
+										</td>
+										<td> 
+										  <input type="text" name="due_date" value="{$due_date}" class="date-pick edit" id="due_date_input">
+										</td>
+										<td>
+										  <input type="text" name="estimated_time" value="{$estimated_time}" class="edit">
+										</td>
+										<td>
+										  <input type="text" name="spent_time" value="{$spent_time}" class="edit">
+										</td>
+										<td> 
+										  <input type="text" name="done_ratio" value="{$done_ratio}" class="input-append edit">
+										  <span class="add-on">%</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<table class="property">
+								<thead>
+									<tr>
+										<th>
+										相关网摘及信息
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td> 
+										  <textarea id="rel_digest" name="rel_digest" rows="3" style="width:95%;height:100px;">{$rel_digest}</textarea>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</fieldset>
+                </li>
+                <li style="padding:0;">
+					<fieldset class="collapsible">
+						<legend class="" onclick="toggleFieldset(this);"><span class="">任务说明</span></legend>
+						<div class="c1">
+							<textarea id="content" name="content" style="height:350px;width:95%;">{$content}</textarea>
+						</div>
+					</fieldset>
+                </li>
+                <li style="padding:0;">
+                  <label>&nbsp;</label>
+                  <div class="c1" style="height:30px;"><input type="submit" class="btn_b" value="发表" /></div>
+                </li>
+              </ul>
+            </div>
+          </form>
+        </div>
+        <div class="c"></div>
+      </div>
+    </div>
+    <div class="c"></div>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	loadKEditor("content");
+	loadKEditor("rel_digest");
+});
+</script> 
+<include file="__THEME__/footer" />
+
