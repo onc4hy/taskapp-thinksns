@@ -19,3 +19,10 @@ https://github.com/hiwiki/taskapp-thinksns
 GIT命令行:
 git clone git@github.com:hiwiki/taskapp-thinksns.git
 
+部分屏幕截图:
+
+![list](http://t.thinksns.com/data/uploads/2012/0529/22/4fc4e46d82fa6.png)
+![minimallist](http://t.thinksns.com/data/uploads/2012/0529/23/4fc4e47082d3b.png)
+![add](http://t.thinksns.com/data/uploads/2012/0529/23/4fc4e47478dd2.png)
+![gtd](http://t.thinksns.com/data/uploads/2012/0529/23/4fc4e477dd860.png)
+
