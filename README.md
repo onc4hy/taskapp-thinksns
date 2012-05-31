@@ -19,6 +19,9 @@ https://github.com/hiwiki/taskapp-thinksns
 GIT命令行:
 git clone git@github.com:hiwiki/taskapp-thinksns.git
 
+发布在ThinkSNS站点上的网址:
+http://thinksns.com/content.php?id=49
+
 部分屏幕截图:
 
 ![list](http://t.thinksns.com/data/uploads/2012/0529/22/4fc4e46d82fa6.png)
